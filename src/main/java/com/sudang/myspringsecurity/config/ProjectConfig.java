@@ -1,5 +1,7 @@
 package com.sudang.myspringsecurity.config;
 
+import com.sudang.myspringsecurity.security.CustomAuthenticationProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,16 +19,13 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @Configuration
 public class ProjectConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private CustomAuthenticationProvider authenticationProvider;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 인-메모리 사용자를 위한 구성
-        // 가능하면 애플리케이션의 책임을 분리해서 작성하는 것이 좋기 때문에 일반적으로 이 접근 방식 권장하지 않음.
-        auth.inMemoryAuthentication()
-                .withUser("sudang")
-                .password("12345")
-                .authorities("read")
-            .and()
-                .passwordEncoder(NoOpPasswordEncoder.getInstance());
+        // AuthenticationProvider 로 UserDetailsService 및 PasswordEncoder 책임 대체
+        auth.authenticationProvider(authenticationProvider);
     }
 
     @Override
