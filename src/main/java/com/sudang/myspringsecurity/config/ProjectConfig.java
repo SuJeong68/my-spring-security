@@ -17,18 +17,15 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @Configuration
 public class ProjectConfig extends WebSecurityConfigurerAdapter {
 
-    // UserDetailsService, PasswordEncoder 빈을 정의하는 대신 아래의 메서드로 설정 가능
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        var userDetailsService = new InMemoryUserDetailsManager();
-
-        var user = User.withUsername("sudang")
+        // 인-메모리 사용자를 위한 구성
+        // 가능하면 애플리케이션의 책임을 분리해서 작성하는 것이 좋기 때문에 일반적으로 이 접근 방식 권장하지 않음.
+        auth.inMemoryAuthentication()
+                .withUser("sudang")
                 .password("12345")
                 .authorities("read")
-                .build();
-        userDetailsService.createUser(user);
-
-        auth.userDetailsService(userDetailsService)
+            .and()
                 .passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
 
