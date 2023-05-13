@@ -2,6 +2,9 @@ package com.sudang.myspringsecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -15,7 +18,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
  * @date   2023/05/13
 **/
 @Configuration
-public class ProjectConfig {
+public class ProjectConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -39,5 +42,14 @@ public class ProjectConfig {
         // 암호에 암호화나 해시를 적용하지 않고 일반 텍스트처럼 처리
         // NoOpPasswordEncoder는 암호를 비교할 때 간단한 문자열만 비교함.
         return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.httpBasic();
+        // 모든 요청에 인증 필요함
+        // http.authorizeRequests().anyRequest().authenticated();
+        // 인증 없이 요청할 수 있음
+        http.authorizeRequests().anyRequest().permitAll();
     }
 }
