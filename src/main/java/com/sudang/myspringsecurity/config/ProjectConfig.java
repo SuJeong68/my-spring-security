@@ -1,15 +1,13 @@
 package com.sudang.myspringsecurity.config;
 
-import com.sudang.myspringsecurity.model.User;
-import com.sudang.myspringsecurity.service.InMemoryUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
-import java.util.List;
+import javax.sql.DataSource;
 
 /**
  * @author sudang
@@ -19,10 +17,15 @@ import java.util.List;
 public class ProjectConfig {
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = new User("sudang", "12345", "read");
-        List<UserDetails> users = List.of(user);
-        return new InMemoryUserDetailsService(users);
+    public UserDetailsService userDetailsService(DataSource dataSource) {
+        String usersByUsernameQuery = "SELECT username, password, enabled FROM users WHERE username = ?";
+        String authoritiesByUsernameQuery = "SELECT username, authority FROM spring.authorities WHERE username = ?";
+
+        var userDetailManager = new JdbcUserDetailsManager(dataSource);
+        userDetailManager.setUsersByUsernameQuery(usersByUsernameQuery);
+        userDetailManager.setAuthoritiesByUsernameQuery(authoritiesByUsernameQuery);
+
+        return new JdbcUserDetailsManager(dataSource);
     }
 
     @Bean
