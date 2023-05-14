@@ -1,33 +1,28 @@
 package com.sudang.myspringsecurity.config;
 
+import com.sudang.myspringsecurity.model.User;
+import com.sudang.myspringsecurity.service.InMemoryUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+
+import java.util.List;
 
 /**
- * 사용자 관리와 암호 관리를 위한 구성 클래스 정의
- *
  * @author sudang
- * @date 2023/05/13
- **/
+ * @date   2023/05/14
+**/
 @Configuration
-public class UserManagerConfig {
+public class ProjectConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        var userDetailsService = new InMemoryUserDetailsManager();
-
-        var user = User.withUsername("sudang")
-                .password("12345")
-                .authorities("read")
-                .build();
-        userDetailsService.createUser(user);
-
-        return userDetailsService;
+        UserDetails user = new User("sudang", "12345", "read");
+        List<UserDetails> users = List.of(user);
+        return new InMemoryUserDetailsService(users);
     }
 
     @Bean
