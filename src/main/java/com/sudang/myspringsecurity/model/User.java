@@ -8,8 +8,8 @@ import java.util.List;
 
 /**
  * @author sudang
- * @date   2023/05/14
-**/
+ * @date 2023/05/14
+ **/
 public class User implements UserDetails {
 
     private final String username;
