@@ -56,6 +56,9 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
     public InitializingBean initializingBean() {
         // 원래 스레드에 있는 세부 정보를 비동기 메서드의 새로 생성된 스레드로 복사
         // 이 방식은 프레임워크가 자체적으로 스레드를 만들때만 작동 (@Async) = 코드로 스레드 생성 시 활성화해도 작동 안함
-        return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+        // return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+
+        // 모든 스레드에 보안 컨텍스트 공유
+        return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
     }
 }
