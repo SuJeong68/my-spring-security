@@ -59,6 +59,7 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
         // return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
 
         // 모든 스레드에 보안 컨텍스트 공유
+        // SecurityContext 는 스레드 세이프하지 않기 때문에 개발자가 직접 해결해야 함
         return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
     }
 }
