@@ -45,16 +45,9 @@ public class ProjectConfig {
         http.httpBasic();
 
         http.authorizeRequests()
-                // curl -u yang:1234 -XGET http://localhost:8080/a/b <- 이 요청은 403 Forbidden
-                .mvcMatchers(HttpMethod.GET, "/a").authenticated()
-                // '/a/b'가 붙은 모든 경로에 적용
-                .mvcMatchers("/a/b/**").hasRole("ADMIN")
-                .mvcMatchers("/product/{code:^[0-9]*$}").permitAll()
-                .mvcMatchers(HttpMethod.POST, "/a").permitAll()
-                .anyRequest().denyAll();
-
-        // CSRF 는 취약점이지만 간단한 실습과 POST, PUT, DELETE 로 노출된 엔드포인트를 포함애 호출할 수 있도록 비활성화
-        http.csrf().disable();
+                // mvcMatchers("/hello")는 '/hello', '/hello/' 모두 보안
+                // antMatchers("/hello")는 '/hello' 만 보안 => '/hello/' 요청 가능하지만 보안되지 않는다는 의미
+                .antMatchers("/hello").authenticated();
 
         return http.build();
     }
