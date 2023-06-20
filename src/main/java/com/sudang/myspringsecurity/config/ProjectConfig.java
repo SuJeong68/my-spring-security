@@ -2,6 +2,7 @@ package com.sudang.myspringsecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -44,12 +45,16 @@ public class ProjectConfig {
         http.httpBasic();
 
         http.authorizeRequests()
-                .mvcMatchers("/hello").hasRole("ADMIN")
-                .mvcMatchers("/ciao").hasRole("MANAGER")
-                // 명시적 규칙 지정 -> 미인증 상태로 200 OK -> 잘못된 자격 증명 시 401 Unauthorized
-                // .anyRequest().permitAll();
-                // 인증된 사용자에게만 나머지 요청 허용
-                .anyRequest().authenticated();
+                // curl -u yang:1234 -XGET http://localhost:8080/a/b <- 이 요청은 403 Forbidden
+                .mvcMatchers(HttpMethod.GET, "/a").authenticated()
+                // '/a/b'가 붙은 모든 경로에 적용
+                .mvcMatchers("/a/b/**").hasRole("ADMIN")
+                .mvcMatchers("/product/{code:^[0-9]*$}").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/a").permitAll()
+                .anyRequest().denyAll();
+
+        // CSRF 는 취약점이지만 간단한 실습과 POST, PUT, DELETE 로 노출된 엔드포인트를 포함애 호출할 수 있도록 비활성화
+        http.csrf().disable();
 
         return http.build();
     }
