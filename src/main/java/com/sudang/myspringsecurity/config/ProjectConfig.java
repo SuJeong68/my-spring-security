@@ -22,13 +22,10 @@ public class ProjectConfig {
         var user1 = User.withUsername("yang")
                 .password("1234")
                 .roles("ADMIN")
-                // 권한 메서드로 역할을 넣으려면 'ROLE_'을 붙여야 함.
-                // .authorities("ROLE_ADMIN")
                 .build();
         var user2 = User.withUsername("achi")
                 .password("1234")
                 .roles("MANAGER")
-                // .authorities("ROLE_MANAGER")
                 .build();
 
         manager.createUser(user1);
@@ -47,7 +44,12 @@ public class ProjectConfig {
         http.httpBasic();
 
         http.authorizeRequests()
-                .anyRequest().hasRole("ADMIN");
+                .mvcMatchers("/hello").hasRole("ADMIN")
+                .mvcMatchers("/ciao").hasRole("MANAGER")
+                // 명시적 규칙 지정 -> 미인증 상태로 200 OK -> 잘못된 자격 증명 시 401 Unauthorized
+                // .anyRequest().permitAll();
+                // 인증된 사용자에게만 나머지 요청 허용
+                .anyRequest().authenticated();
 
         return http.build();
     }
