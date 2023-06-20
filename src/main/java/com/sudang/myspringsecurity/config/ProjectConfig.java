@@ -45,9 +45,10 @@ public class ProjectConfig {
         http.httpBasic();
 
         http.authorizeRequests()
-                // mvcMatchers("/hello")는 '/hello', '/hello/' 모두 보안
-                // antMatchers("/hello")는 '/hello' 만 보안 => '/hello/' 요청 가능하지만 보안되지 않는다는 의미
-                .antMatchers("/hello").authenticated();
+                // https://regexr.com/ = 온라인 정규식 생성기
+                // "경로에 특정한 기호나 문자가 있으면 모든 요청을 거부한다" 같은 특정 상황에 정규식 생성기 필요
+                .regexMatchers(".*/(us|uk|ca)+/(en|fr).*").authenticated()
+                .anyRequest().denyAll();
 
         return http.build();
     }
